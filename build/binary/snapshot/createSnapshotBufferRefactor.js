@@ -58,6 +58,7 @@ const getVisibleState = (user, instance) => {
 const createSnapshotBufferRefactor = (user, instance, verboseLogSchemaResolution = false) => {
     let bytes = 0;
     const { createEntities, updateEntities, deleteEntities, messages, engineMessages, } = getVisibleState(user, instance);
+    console.log('Creating snapshot buffer refactor with verbose log schema resolution:', verboseLogSchemaResolution);
     if (engineMessages.length > 0) {
         if (verboseLogSchemaResolution)
             console.log("[VERBOSE LOGGING] Engine messages:", engineMessages);

@@ -77,10 +77,12 @@ const createSnapshotBufferRefactor = (user: User, instance: Instance, verboseLog
 		engineMessages,
 	} = getVisibleState(user, instance);
 
+	console.log('Creating snapshot buffer refactor with verbose log schema resolution:', verboseLogSchemaResolution);
+
 	if (engineMessages.length > 0) {
 
 		if (verboseLogSchemaResolution) console.log("[VERBOSE LOGGING] Engine messages:", engineMessages);
-		
+
 		bytes += 1; // section BinarySection.EngineMessages
 		bytes += 1; // quantity of engine messages
 		for (let i = 0; i < engineMessages.length; i++) {
