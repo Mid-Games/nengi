@@ -48,14 +48,14 @@ export class Context {
 	}
 
 	register(ntype: number, schema: Schema) {
+
+		console.log(`Registering schema of ntype: ${ntype}`, schema);
+
 		this.schemas.set(ntype, schema);
 	}
 
 	getSchema(ntype: number) {
-		if (ntype === 2) {
-			console.log(this.schemas);
-		}
-
+		console.log('Getting schema for ntype:', ntype);
 		return this.schemas.get(ntype)!;
 	}
 
