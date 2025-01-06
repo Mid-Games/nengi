@@ -1,10 +1,10 @@
-import { Context } from '../common/Context';
-import { LocalState } from './LocalState';
-import { INetworkEvent, InstanceNetwork } from './InstanceNetwork';
-import { User } from './User';
-import { EntityCache } from './EntityCache';
-import { IEntity } from '../common/IEntity';
-import { NQueue } from '../NQueue';
+import { Context } from "../common/Context";
+import { LocalState } from "./LocalState";
+import { INetworkEvent, InstanceNetwork } from "./InstanceNetwork";
+import { User } from "./User";
+import { EntityCache } from "./EntityCache";
+import { IEntity } from "../common/IEntity";
+import { NQueue } from "../NQueue";
 export declare class Instance {
     context: Context;
     localState: LocalState;

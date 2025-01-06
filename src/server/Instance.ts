@@ -1,108 +1,118 @@
-import { Context } from '../common/Context'
-import { LocalState } from './LocalState'
-import { INetworkEvent, InstanceNetwork } from './InstanceNetwork'
-import { User } from './User'
-import { EntityCache } from './EntityCache'
-import createSnapshotBufferRefactor from '../binary/snapshot/createSnapshotBufferRefactor'
-import { IEntity } from '../common/IEntity'
-import { NQueue } from '../NQueue'
-import { EngineMessage } from '../common/EngineMessage'
+import { Context } from "../common/Context";
+import { LocalState } from "./LocalState";
+import { INetworkEvent, InstanceNetwork } from "./InstanceNetwork";
+import { User } from "./User";
+import { EntityCache } from "./EntityCache";
+import createSnapshotBufferRefactor from "../binary/snapshot/createSnapshotBufferRefactor";
+import { IEntity } from "../common/IEntity";
+import { NQueue } from "../NQueue";
+import { EngineMessage } from "../common/EngineMessage";
 
 export class Instance {
-    context: Context
-    localState: LocalState
-    network: InstanceNetwork
-    queue: NQueue<INetworkEvent>
-    users: Map<number, User>
-    incrementalUserId: number
-    cache: EntityCache
-    tick: number
-    pingIntervalMs: number
-    responseEndPoints: Map<number, (body: any, send: (response: any) => void) => any>
-    /**
-     *
-     * @param handshake test test
-     * ```ts
-     * instance.onConnect = async (handshake: any) => {
-     *      return await authenticateUser(handshake)
-     * }
-     * ```
-     */
-    onConnect: (handshake: any) => Promise<any>
+	context: Context;
+	localState: LocalState;
+	network: InstanceNetwork;
+	queue: NQueue<INetworkEvent>;
+	users: Map<number, User>;
+	incrementalUserId: number;
+	cache: EntityCache;
+	tick: number;
+	pingIntervalMs: number;
+	responseEndPoints: Map<
+		number,
+		(body: any, send: (response: any) => void) => any
+	>;
+	/**
+	 *
+	 * @param handshake test test
+	 * ```ts
+	 * instance.onConnect = async (handshake: any) => {
+	 *      return await authenticateUser(handshake)
+	 * }
+	 * ```
+	 */
+	onConnect: (handshake: any) => Promise<any>;
 
-    constructor(context: Context) {
-        this.context = context
-        this.localState = new LocalState()
-        this.users = new Map()
-        this.queue = new NQueue()
-        this.incrementalUserId = 0
-        this.cache = new EntityCache()
-        this.tick = 1
-        this.pingIntervalMs = 10000
-        this.responseEndPoints = new Map()
+	constructor(context: Context) {
+		console.log("Passed context:", context);
 
-        this.onConnect = (handshake: any) => {
-            return new Promise((resolve, reject) => {
-                console.log(`Please define an instance.onConnect handler that returns a Promise<boolean>. Connection denied. Received handshake ${handshake}`)
-                resolve(false)
-            })
-        }
+		this.context = context;
+		this.localState = new LocalState();
+		this.users = new Map();
+		this.queue = new NQueue();
+		this.incrementalUserId = 0;
+		this.cache = new EntityCache();
+		this.tick = 1;
+		this.pingIntervalMs = 10000;
+		this.responseEndPoints = new Map();
 
-        this.network = new InstanceNetwork(this)
-    }
+		this.onConnect = (handshake: any) => {
+			return new Promise((resolve, reject) => {
+				console.log(
+					`Please define an instance.onConnect handler that returns a Promise<boolean>. Connection denied. Received handshake ${handshake}`,
+				);
+				resolve(false);
+			});
+		};
 
-    attachEntity(parentNid: number, child: IEntity) {
-        this.localState.addChild(parentNid, child)
-    }
+		this.network = new InstanceNetwork(this);
+	}
 
-    detachEntity(parentNid: number, child: IEntity) {
-        this.localState.removeChild(parentNid, child)
-    }
+	attachEntity(parentNid: number, child: IEntity) {
+		this.localState.addChild(parentNid, child);
+	}
 
-    respond(endpoint: number, callback: (body: any, send: (response: any) => void) => any) {
-        this.responseEndPoints.set(endpoint, callback)
-    }
+	detachEntity(parentNid: number, child: IEntity) {
+		this.localState.removeChild(parentNid, child);
+	}
 
-    step() {
-        const timestamp = Date.now()
-        const timeSyncEngineMessage = {
-            ntype: EngineMessage.TimeSync,
-            timestamp
-        }
+	respond(
+		endpoint: number,
+		callback: (body: any, send: (response: any) => void) => any,
+	) {
+		this.responseEndPoints.set(endpoint, callback);
+	}
 
-        this.tick++
-        this.localState.tick(this.tick)
-        this.cache.createCachesForTick(this.tick)
+	step() {
+		const timestamp = Date.now();
+		const timeSyncEngineMessage = {
+			ntype: EngineMessage.TimeSync,
+			timestamp,
+		};
 
-        this.users.forEach(user => {
-            if (user.lastSentInstanceTick === 0) {
-                // this is the first frame connected!
-                user.queueEngineMessage(timeSyncEngineMessage)
-            } else {
-                // send timeSyncs every 20 ticks
-                if (user.lastSentInstanceTick % 20 === 0) {
-                    user.queueEngineMessage(timeSyncEngineMessage)
-                }
-            }
+		this.tick++;
+		this.localState.tick(this.tick);
+		this.cache.createCachesForTick(this.tick);
 
-            if (user.lastSentPingTimestamp < timestamp - this.pingIntervalMs) {
-                user.queueEngineMessage({
-                    ntype: EngineMessage.Ping,
-                    latency: user.latency
-                })
-                user.lastSentPingTimestamp = timestamp
-            }
+		this.users.forEach((user) => {
+			if (user.lastSentInstanceTick === 0) {
+				// this is the first frame connected!
+				user.queueEngineMessage(timeSyncEngineMessage);
+			} else {
+				// send timeSyncs every 20 ticks
+				if (user.lastSentInstanceTick % 20 === 0) {
+					user.queueEngineMessage(timeSyncEngineMessage);
+				}
+			}
 
-            user.queueEngineMessage({
-                ntype: EngineMessage.ClientTick,
-                tick: user.lastReceivedClientTick
-            })
+			if (user.lastSentPingTimestamp < timestamp - this.pingIntervalMs) {
+				user.queueEngineMessage({
+					ntype: EngineMessage.Ping,
+					latency: user.latency,
+				});
+				user.lastSentPingTimestamp = timestamp;
+			}
 
-            const buffer = createSnapshotBufferRefactor(user, this)
-            user.send(buffer)
-            user.lastSentInstanceTick = this.tick
-        })
+			user.queueEngineMessage({
+				ntype: EngineMessage.ClientTick,
+				tick: user.lastReceivedClientTick,
+			});
 
-        this.cache.deleteCachesForTick(this.tick)
-    }
+			const buffer = createSnapshotBufferRefactor(user, this);
+			user.send(buffer);
+			user.lastSentInstanceTick = this.tick;
+		});
+
+		this.cache.deleteCachesForTick(this.tick);
+	}
 }

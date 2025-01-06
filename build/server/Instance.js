@@ -12,6 +12,7 @@ const NQueue_1 = require("../NQueue");
 const EngineMessage_1 = require("../common/EngineMessage");
 class Instance {
     constructor(context) {
+        console.log("Passed context:", context);
         this.context = context;
         this.localState = new LocalState_1.LocalState();
         this.users = new Map();
@@ -42,12 +43,12 @@ class Instance {
         const timestamp = Date.now();
         const timeSyncEngineMessage = {
             ntype: EngineMessage_1.EngineMessage.TimeSync,
-            timestamp
+            timestamp,
         };
         this.tick++;
         this.localState.tick(this.tick);
         this.cache.createCachesForTick(this.tick);
-        this.users.forEach(user => {
+        this.users.forEach((user) => {
             if (user.lastSentInstanceTick === 0) {
                 // this is the first frame connected!
                 user.queueEngineMessage(timeSyncEngineMessage);
@@ -61,13 +62,13 @@ class Instance {
             if (user.lastSentPingTimestamp < timestamp - this.pingIntervalMs) {
                 user.queueEngineMessage({
                     ntype: EngineMessage_1.EngineMessage.Ping,
-                    latency: user.latency
+                    latency: user.latency,
                 });
                 user.lastSentPingTimestamp = timestamp;
             }
             user.queueEngineMessage({
                 ntype: EngineMessage_1.EngineMessage.ClientTick,
-                tick: user.lastReceivedClientTick
+                tick: user.lastReceivedClientTick,
             });
             const buffer = (0, createSnapshotBufferRefactor_1.default)(user, this);
             user.send(buffer);
