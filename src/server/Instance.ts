@@ -18,6 +18,7 @@ export class Instance {
 	cache: EntityCache;
 	tick: number;
 	pingIntervalMs: number;
+	verboseLogSchemaErrors: boolean = false;
 	responseEndPoints: Map<
 		number,
 		(body: any, send: (response: any) => void) => any
@@ -33,8 +34,10 @@ export class Instance {
 	 */
 	onConnect: (handshake: any) => Promise<any>;
 
-	constructor(context: Context) {
+	constructor(context: Context, verboseLogSchemaErrors: boolean = false) {
 		console.log("Passed context:", context);
+
+		this.verboseLogSchemaErrors = verboseLogSchemaErrors;
 
 		this.context = context;
 		this.localState = new LocalState();
@@ -108,7 +111,7 @@ export class Instance {
 				tick: user.lastReceivedClientTick,
 			});
 
-			const buffer = createSnapshotBufferRefactor(user, this);
+			const buffer = createSnapshotBufferRefactor(user, this, this.verboseLogSchemaErrors);
 			user.send(buffer);
 			user.lastSentInstanceTick = this.tick;
 		});
