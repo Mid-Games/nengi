@@ -19,12 +19,6 @@ const getVisibleState = (user: User, instance: Instance) => {
 
 		const nschema = instance.context.getSchema(entity.ntype)!;
 
-		if (entity.ntype === 2) {
-			console.log("Found entity in get visible state:", entity);
-
-			console.log("Found nschema in get visible state:", nschema);
-		}
-
 		if (nschema) {
 			if (!instance.cache.cacheContains(nid)) {
 				instance.cache.cacheify(instance.tick, entity, nschema);
@@ -77,7 +71,7 @@ const createSnapshotBufferRefactor = (user: User, instance: Instance, verboseLog
 		engineMessages,
 	} = getVisibleState(user, instance);
 
-	console.log('Creating snapshot buffer refactor with verbose log schema resolution:', verboseLogSchemaResolution);
+	if (verboseLogSchemaResolution) console.log('Creating snapshot buffer refactor with verbose log schema resolution:', verboseLogSchemaResolution);
 
 	if (engineMessages.length > 0) {
 

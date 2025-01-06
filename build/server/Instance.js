@@ -13,7 +13,8 @@ const EngineMessage_1 = require("../common/EngineMessage");
 class Instance {
     constructor(context, verboseLogSchemaErrors = false) {
         this.verboseLogSchemaErrors = false;
-        console.log("Passed context:", context);
+        if (verboseLogSchemaErrors)
+            console.log("Passed context:", context);
         this.verboseLogSchemaErrors = verboseLogSchemaErrors;
         this.context = context;
         this.localState = new LocalState_1.LocalState();

@@ -25,11 +25,9 @@ class Context {
         this.engineSchemas.set(EngineMessage_1.EngineMessage.Pong, pongSchema_1.pongSchema);
     }
     register(ntype, schema) {
-        console.log(`Registering schema of ntype: ${ntype}`, schema);
         this.schemas.set(ntype, schema);
     }
     getSchema(ntype) {
-        console.log('Getting schema for ntype:', ntype);
         return this.schemas.get(ntype);
     }
     getEngineSchema(ntype) {

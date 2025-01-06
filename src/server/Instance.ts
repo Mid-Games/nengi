@@ -35,7 +35,7 @@ export class Instance {
 	onConnect: (handshake: any) => Promise<any>;
 
 	constructor(context: Context, verboseLogSchemaErrors: boolean = false) {
-		console.log("Passed context:", context);
+		if (verboseLogSchemaErrors) console.log("Passed context:", context);
 
 		this.verboseLogSchemaErrors = verboseLogSchemaErrors;
 
