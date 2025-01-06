@@ -1,4 +1,4 @@
-import { Schema } from './binary/schema/Schema';
+import type { Schema } from "./binary/schema/Schema";
 export declare class Context {
     /**
      * user-defined network schemas

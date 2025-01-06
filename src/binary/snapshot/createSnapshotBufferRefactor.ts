@@ -17,11 +17,13 @@ const getVisibleState = (user: User, instance: Instance) => {
 		const nid = toCreate[i];
 		const entity = instance.localState.getByNid(nid);
 
-		console.log("Found entity in get visible state:", entity);
-
 		const nschema = instance.context.getSchema(entity.ntype)!;
 
-		console.log("Found nschema in get visible state:", nschema);
+		if (entity.ntype === 2) {
+			console.log("Found entity in get visible state:", entity);
+
+			console.log("Found nschema in get visible state:", nschema);
+		}
 
 		if (nschema) {
 			if (!instance.cache.cacheContains(nid)) {

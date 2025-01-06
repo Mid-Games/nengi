@@ -28,6 +28,9 @@ class Context {
         this.schemas.set(ntype, schema);
     }
     getSchema(ntype) {
+        if (ntype === 2) {
+            console.log(this.schemas);
+        }
         return this.schemas.get(ntype);
     }
     getEngineSchema(ntype) {
