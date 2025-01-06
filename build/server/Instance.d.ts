@@ -15,6 +15,7 @@ export declare class Instance {
     cache: EntityCache;
     tick: number;
     pingIntervalMs: number;
+    verboseLogSchemaErrors: boolean;
     responseEndPoints: Map<number, (body: any, send: (response: any) => void) => any>;
     /**
      *
@@ -26,7 +27,7 @@ export declare class Instance {
      * ```
      */
     onConnect: (handshake: any) => Promise<any>;
-    constructor(context: Context);
+    constructor(context: Context, verboseLogSchemaErrors?: boolean);
     attachEntity(parentNid: number, child: IEntity): void;
     detachEntity(parentNid: number, child: IEntity): void;
     respond(endpoint: number, callback: (body: any, send: (response: any) => void) => any): void;

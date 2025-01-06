@@ -55,10 +55,12 @@ const getVisibleState = (user, instance) => {
         engineMessages,
     };
 };
-const createSnapshotBufferRefactor = (user, instance) => {
+const createSnapshotBufferRefactor = (user, instance, verboseLogSchemaErrors = false) => {
     let bytes = 0;
     const { createEntities, updateEntities, deleteEntities, messages, engineMessages, } = getVisibleState(user, instance);
     if (engineMessages.length > 0) {
+        if (verboseLogSchemaErrors)
+            console.log("[VERBOSE LOGGING] Engine messages:", engineMessages);
         bytes += 1; // section BinarySection.EngineMessages
         bytes += 1; // quantity of engine messages
         for (let i = 0; i < engineMessages.length; i++) {
@@ -68,6 +70,8 @@ const createSnapshotBufferRefactor = (user, instance) => {
         }
     }
     if (messages.length > 0) {
+        if (verboseLogSchemaErrors)
+            console.log("[VERBOSE LOGGING] Game messages:", messages);
         bytes += 1; // section BinarySection.Messages
         bytes += 4; // quantity of messages
         for (let i = 0; i < messages.length; i++) {
@@ -77,6 +81,8 @@ const createSnapshotBufferRefactor = (user, instance) => {
         }
     }
     if (user.responseQueue.length > 0) {
+        if (verboseLogSchemaErrors)
+            console.log("[VERBOSE LOGGING] User response queue:", user.responseQueue);
         bytes += 1;
         bytes += 4;
         for (let i = 0; i < user.responseQueue.length; i++) {
@@ -86,26 +92,38 @@ const createSnapshotBufferRefactor = (user, instance) => {
         }
     }
     if (createEntities.length > 0) {
+        if (verboseLogSchemaErrors)
+            console.log("[VERBOSE LOGGING] Create entities:", createEntities);
         // section create
         bytes += 1;
         bytes += 4;
         for (let i = 0; i < createEntities.length; i++) {
             const nid = createEntities[i].nid;
             const entity = instance.localState.getByNid(nid);
+            if (verboseLogSchemaErrors)
+                console.log(`[VERBOSE LOGGING] Create entities - (Got entity by nid: ${nid}):`, entity);
             const nschema = instance.context.getSchema(entity.ntype);
+            if (verboseLogSchemaErrors)
+                console.log(`[VERBOSE LOGGING] Create entities - (Got nschema by ntype: ${entity.ntype}):`, nschema);
             bytes += (0, count_1.default)(nschema, entity);
         }
     }
     if (updateEntities.length > 0) {
+        if (verboseLogSchemaErrors)
+            console.log("[VERBOSE LOGGING] Update entities:", updateEntities);
         // section update
         bytes += 1;
         bytes += 4;
         for (let i = 0; i < updateEntities.length; i++) {
             const diff = updateEntities[i];
+            if (verboseLogSchemaErrors)
+                console.log(`[VERBOSE LOGGING] Update entities - (Got diff):`, diff);
             bytes += (0, countDiff_1.default)(diff, diff.nschema);
         }
     }
     if (deleteEntities.length > 0) {
+        if (verboseLogSchemaErrors)
+            console.log("[VERBOSE LOGGING] Delete entities:", deleteEntities);
         bytes += 1; // delete entities
         bytes += 4; // quantity of entities to delete
         for (let i = 0; i < deleteEntities.length; i++) {

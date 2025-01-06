@@ -11,8 +11,10 @@ const createSnapshotBufferRefactor_1 = __importDefault(require("../binary/snapsh
 const NQueue_1 = require("../NQueue");
 const EngineMessage_1 = require("../common/EngineMessage");
 class Instance {
-    constructor(context) {
+    constructor(context, verboseLogSchemaErrors = false) {
+        this.verboseLogSchemaErrors = false;
         console.log("Passed context:", context);
+        this.verboseLogSchemaErrors = verboseLogSchemaErrors;
         this.context = context;
         this.localState = new LocalState_1.LocalState();
         this.users = new Map();
@@ -70,7 +72,7 @@ class Instance {
                 ntype: EngineMessage_1.EngineMessage.ClientTick,
                 tick: user.lastReceivedClientTick,
             });
-            const buffer = (0, createSnapshotBufferRefactor_1.default)(user, this);
+            const buffer = (0, createSnapshotBufferRefactor_1.default)(user, this, this.verboseLogSchemaErrors);
             user.send(buffer);
             user.lastSentInstanceTick = this.tick;
         });
