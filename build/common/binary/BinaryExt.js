@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.declareBinaryType = exports.binaryGet = void 0;
+exports.binaryGet = void 0;
+exports.declareBinaryType = declareBinaryType;
 const Binary_1 = require("./Binary");
 function countByteArray(value) {
     return value.length + 4;
@@ -63,7 +64,6 @@ function declareBinaryType(binaryIndex, spec) {
         clone: (clone) ? clone : (value) => { return value; }
     });
 }
-exports.declareBinaryType = declareBinaryType;
 declareBinaryType(Binary_1.Binary.UInt8, {
     write: (value, bw) => { bw.writeUInt8(value); },
     read: (br) => { return br.readUInt8(); },

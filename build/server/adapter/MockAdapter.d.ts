@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { Buffer } from 'buffer';
 import { IServerNetworkAdapter } from './IServerNetworkAdapter';
 import { InstanceNetwork } from '../InstanceNetwork';

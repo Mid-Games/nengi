@@ -16,7 +16,9 @@ const getVisibleState = (user, instance) => {
     for (let i = 0; i < toCreate.length; i++) {
         const nid = toCreate[i];
         const entity = instance.localState.getByNid(nid);
+        console.log("Found entity in get visible state:", entity);
         const nschema = instance.context.getSchema(entity.ntype);
+        console.log("Found nschema in get visible state:", nschema);
         if (nschema) {
             if (!instance.cache.cacheContains(nid)) {
                 instance.cache.cacheify(instance.tick, entity, nschema);
@@ -48,12 +50,12 @@ const getVisibleState = (user, instance) => {
         updateEntities,
         deleteEntities,
         messages,
-        engineMessages
+        engineMessages,
     };
 };
 const createSnapshotBufferRefactor = (user, instance) => {
     let bytes = 0;
-    const { createEntities, updateEntities, deleteEntities, messages, engineMessages } = getVisibleState(user, instance);
+    const { createEntities, updateEntities, deleteEntities, messages, engineMessages, } = getVisibleState(user, instance);
     if (engineMessages.length > 0) {
         bytes += 1; // section BinarySection.EngineMessages
         bytes += 1; // quantity of engine messages

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.defineSchema = void 0;
+exports.defineSchema = defineSchema;
 const Binary_1 = require("../Binary");
 const Schema_1 = require("./Schema");
 function defineSchema(schema) {
@@ -47,4 +47,3 @@ function defineSchema(schema) {
     }
     return compiled;
 }
-exports.defineSchema = defineSchema;

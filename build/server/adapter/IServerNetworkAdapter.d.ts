@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { IBinaryReader } from '../../common/binary/IBinaryReader';
 import { IBinaryWriter } from '../../common/binary/IBinaryWriter';
 import { User } from '../User';

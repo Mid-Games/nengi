@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { Instance } from './Instance';
 import { NetworkEvent } from '../common/binary/NetworkEvent';
 import { User } from './User';

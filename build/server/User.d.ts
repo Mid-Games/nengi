@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { IChannel } from './IChannel';
 import { Instance } from './Instance';
 import { InstanceNetwork } from './InstanceNetwork';

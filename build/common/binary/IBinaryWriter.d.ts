@@ -1,4 +1,3 @@
-/// <reference types="node" />
 interface IBinaryWriter {
     buffer: Buffer | ArrayBuffer;
     writeUInt8(value: number): void;
