@@ -66,7 +66,7 @@ const getVisibleState = (user: User, instance: Instance) => {
 	};
 };
 
-const createSnapshotBufferRefactor = (user: User, instance: Instance, verboseLogSchemaErrors: boolean = false) => {
+const createSnapshotBufferRefactor = (user: User, instance: Instance, verboseLogSchemaResolution: boolean = false) => {
 	let bytes = 0;
 
 	const {
@@ -78,7 +78,9 @@ const createSnapshotBufferRefactor = (user: User, instance: Instance, verboseLog
 	} = getVisibleState(user, instance);
 
 	if (engineMessages.length > 0) {
-		if (verboseLogSchemaErrors) console.log("[VERBOSE LOGGING] Engine messages:", engineMessages);
+
+		if (verboseLogSchemaResolution) console.log("[VERBOSE LOGGING] Engine messages:", engineMessages);
+		
 		bytes += 1; // section BinarySection.EngineMessages
 		bytes += 1; // quantity of engine messages
 		for (let i = 0; i < engineMessages.length; i++) {
@@ -89,18 +91,23 @@ const createSnapshotBufferRefactor = (user: User, instance: Instance, verboseLog
 	}
 
 	if (messages.length > 0) {
-		if (verboseLogSchemaErrors) console.log("[VERBOSE LOGGING] Game messages:", messages);
+		if (verboseLogSchemaResolution) console.log("[VERBOSE LOGGING] Game messages:", messages);
 		bytes += 1; // section BinarySection.Messages
 		bytes += 4; // quantity of messages
 		for (let i = 0; i < messages.length; i++) {
 			const message = messages[i];
 			const nschema = instance.context.getSchema(message.ntype)!;
+
+			if (verboseLogSchemaResolution) console.log(`[VERBOSE LOGGING] Game messages - (Got nschema by ntype: ${message.ntype}):`, nschema);
+
 			bytes += count(nschema, message);
 		}
 	}
 
 	if (user.responseQueue.length > 0) {
-		if (verboseLogSchemaErrors) console.log("[VERBOSE LOGGING] User response queue:", user.responseQueue);
+
+		if (verboseLogSchemaResolution) console.log("[VERBOSE LOGGING] User response queue:", user.responseQueue);
+
 		bytes += 1;
 		bytes += 4;
 
@@ -114,7 +121,9 @@ const createSnapshotBufferRefactor = (user: User, instance: Instance, verboseLog
 	}
 
 	if (createEntities.length > 0) {
-		if (verboseLogSchemaErrors) console.log("[VERBOSE LOGGING] Create entities:", createEntities);
+
+		if (verboseLogSchemaResolution) console.log("[VERBOSE LOGGING] Create entities:", createEntities);
+
 		// section create
 		bytes += 1;
 		bytes += 4;
@@ -122,28 +131,38 @@ const createSnapshotBufferRefactor = (user: User, instance: Instance, verboseLog
 		for (let i = 0; i < createEntities.length; i++) {
 			const nid = createEntities[i].nid;
 			const entity = instance.localState.getByNid(nid);
-		if (verboseLogSchemaErrors) console.log(`[VERBOSE LOGGING] Create entities - (Got entity by nid: ${nid}):`, entity);
+
+			if (verboseLogSchemaResolution) console.log(`[VERBOSE LOGGING] Create entities - (Got entity by nid: ${nid}):`, entity);
+
 			const nschema = instance.context.getSchema(entity.ntype)!;
-		if (verboseLogSchemaErrors) console.log(`[VERBOSE LOGGING] Create entities - (Got nschema by ntype: ${entity.ntype}):`, nschema);
+
+			if (verboseLogSchemaResolution) console.log(`[VERBOSE LOGGING] Create entities - (Got nschema by ntype: ${entity.ntype}):`, nschema);
+
 			bytes += count(nschema, entity);
 		}
 	}
 
 	if (updateEntities.length > 0) {
-		if (verboseLogSchemaErrors) console.log("[VERBOSE LOGGING] Update entities:", updateEntities);
+
+		if (verboseLogSchemaResolution) console.log("[VERBOSE LOGGING] Update entities:", updateEntities);
+
 		// section update
 		bytes += 1;
 		bytes += 4;
 
 		for (let i = 0; i < updateEntities.length; i++) {
 			const diff = updateEntities[i];
-			if (verboseLogSchemaErrors) console.log(`[VERBOSE LOGGING] Update entities - (Got diff):`, diff);
+
+			if (verboseLogSchemaResolution) console.log(`[VERBOSE LOGGING] Update entities - (Got diff):`, diff);
+
 			bytes += countDiff(diff, diff.nschema);
 		}
 	}
 
 	if (deleteEntities.length > 0) {
-		if (verboseLogSchemaErrors) console.log("[VERBOSE LOGGING] Delete entities:", deleteEntities);
+
+		if (verboseLogSchemaResolution) console.log("[VERBOSE LOGGING] Delete entities:", deleteEntities);
+
 		bytes += 1; // delete entities
 		bytes += 4; // quantity of entities to delete
 		for (let i = 0; i < deleteEntities.length; i++) {
