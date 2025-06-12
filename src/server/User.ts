@@ -35,7 +35,7 @@ export class User {
     latency = 0
     lastSentPingTimestamp = 0
     recentLatencies: number[] = []
-    latencySamples = 3
+    latencySamples = 15
 
     constructor(socket: any, networkAdapter: IServerNetworkAdapter) {
         this.socket = socket
