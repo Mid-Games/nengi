@@ -1,7 +1,7 @@
 {
   "name": "nengi",
-  "version": "2.0.0-alpha.173",
-  "description": "nengi2 alpha branch",
+  "version": "2.0.0",
+  "description": "nengi2 mid games fork",
   "main": "./build/index.js",
   "scripts": {
     "test": "npx jest",

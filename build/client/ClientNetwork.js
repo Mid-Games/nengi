@@ -43,7 +43,7 @@ class ClientNetwork {
     }
     incrementClientTick() {
         this.clientTick++;
-        if (this.clientTick > 65535) {
+        if (this.clientTick > 4294967295) {
             this.clientTick = 1;
         }
     }

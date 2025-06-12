@@ -28,7 +28,7 @@ class User {
         this.latency = 0;
         this.lastSentPingTimestamp = 0;
         this.recentLatencies = [];
-        this.latencySamples = 3;
+        this.latencySamples = 15;
         this.socket = socket;
         this.networkAdapter = networkAdapter;
     }
